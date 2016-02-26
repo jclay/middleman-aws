@@ -33,8 +33,14 @@ namespace :mm do
     aws_env = "AWS_ACCESS_KEY=#{credentials[:access_key_id]} AWS_SECRET=#{credentials[:secret_access_key]}"
     puts '## Syncing to S3...'
     system "#{aws_env} bundle exec middleman s3_sync"
-    puts '## Invalidating cloudfront...'
-    system "#{aws_env} bundle exec middleman invalidate"
+
+    if ENV['SKIP_CF']
+      puts '## Skipping cloudfront...'
+    else
+      puts '## Invalidating cloudfront...'
+      system "#{aws_env} bundle exec middleman invalidate"
+    end
+    
     puts '## Deploy complete.'
   end
 
